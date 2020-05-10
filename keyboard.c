@@ -29,7 +29,7 @@ void pushKeyShift( VALUE self, VALUE VK_CODE ) {
 void typeSent( VALUE self, VALUE str ) {
 	char *cstr = StringValuePtr( str );
 	long len = RSTRING_LEN( RSTRING( str ) );
-	char pattern[] = "!\"#$%&'()", *ptr;
+	char *pattern = "!\"#$%&'()", *ptr;
 	for ( long i = 0; i < len; ++i ) {
 		if ( '0' <= cstr[i] && cstr[i] <= '9' ) {
 			pushKey( self, INT2FIX( cstr[i] ) );
@@ -39,17 +39,19 @@ void typeSent( VALUE self, VALUE str ) {
 			pushKeyShift( self, INT2FIX( cstr[i] ) );
 		} else if ( ( ptr = strchr( pattern, cstr[i] ) ) ) {
 			pushKeyShift( self, INT2FIX( '1' + ptr - pattern ) );
-		}else if ( cstr[i] == ' ' ) {
+		} else if ( cstr[i] == ' ' ) {
 			pushKey( self, INT2FIX( VK_SPACE ) );
 		}
 	}
 }
+// [ENTER][TAB][BACKSPACE]等も追加予定
 
 // KeyBoard.keys()
 VALUE getPushKey( VALUE self ) {
 	unsigned char buf[256];
 	VALUE ary[256];
 	int i, j;
+	GetKeyState( 0 ); // メッセージキューを取得
 	GetKeyboardState( buf );
 	for ( i = 0, j = 0; i < 256; ++i ) {
 		if ( buf[i] & 0x80 )
