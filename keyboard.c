@@ -29,7 +29,7 @@ void pushKeyShift( VALUE self, VALUE VK_CODE ) {
 void typeSent( VALUE self, VALUE str ) {
 	char *cstr = StringValuePtr( str );
 	long len = RSTRING_LEN( RSTRING( str ) );
-	char pattern[] = "!\"#$\%&'()", *ptr;
+	char pattern[] = "!\"#$%&'()", *ptr;
 	for ( long i = 0; i < len; ++i ) {
 		if ( '0' <= cstr[i] && cstr[i] <= '9' ) {
 			pushKey( self, INT2FIX( cstr[i] ) );
